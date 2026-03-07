@@ -1,0 +1,29 @@
+name: Container Daily Monitor
+
+on:
+  schedule:
+    # 20 23 * * 0-4 (延後10分鐘，對應日本時間週一到週五的 08:40 執行)
+    - cron: '20 23 * * 0-4'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 檢出代碼
+        uses: actions/checkout@v3
+
+      - name: 設定 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 安裝套件 (包含 akshare)
+        run: |
+          pip install pandas yfinance requests matplotlib akshare
+
+      - name: 執行監控程式
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        run: python container_monitor.py
