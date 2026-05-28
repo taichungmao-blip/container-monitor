@@ -9,7 +9,7 @@ import time
 from deep_translator import GoogleTranslator
 
 # ================= 設定區 =================
-WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
+WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK")
 
 # 台股 GICS 板塊翻譯對應 (可依需求擴充)
 SECTOR_MAP = {
@@ -25,7 +25,7 @@ SECTOR_MAP = {
 }
 
 if not WEBHOOK_URL:
-    print("錯誤：找不到 DISCORD_WEBHOOK_URL 環境變數！")
+    print("錯誤：找不到 DISCORD_WEBHOOK 環境變數！")
     sys.exit(1)
 # ==========================================
 
