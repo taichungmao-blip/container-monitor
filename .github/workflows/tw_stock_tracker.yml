@@ -1,0 +1,37 @@
+name: 每日台股前 300 大漲跌幅報告
+
+on:
+  schedule:
+    # GitHub Actions 使用 UTC 時間，台灣時間是 UTC+8。
+    # 這裡設定 UTC 08:00，等於台灣時間 16:00。
+    # 1-5 代表星期一到星期五。
+    - cron: '0 8 * * 1-5'
+  
+  # 允許在 GitHub 網頁上手動點擊 "Run workflow" 執行
+  workflow_dispatch: 
+
+jobs:
+  run-stock-tracker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 檢出程式碼 (Checkout code)
+        uses: actions/checkout@v4
+
+      - name: 設定 Python 環境 (Set up Python)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 安裝相依套件 (Install dependencies)
+        run: |
+          python -m pip install --upgrade pip
+          # 這裡直接安裝程式需要的套件，也可以改成 pip install -r requirements.txt
+          pip install yfinance pandas matplotlib requests deep-translator
+
+      - name: 執行台股追蹤程式 (Run script)
+        env:
+          # 將 GitHub Secrets 中的 webhook URL 傳遞給環境變數
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        # 請確認這裡的檔名與你上傳到 GitHub 的 Python 檔名一致
+        run: python tw_stock_tracker.py
